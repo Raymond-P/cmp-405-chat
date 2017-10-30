@@ -15,7 +15,7 @@ public class SendReceiveSocket {
 		
 		
 		try {
-			inSocket = new DatagramSocket(64000, myAddress);
+			inSocket = new DatagramSocket(65000, myAddress);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -112,13 +112,13 @@ public class SendReceiveSocket {
 				System.exit(-1);
 			}
 		}
-
-		try {
-			TimeUnit.MINUTES.sleep(1);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
+//
+//		try {
+//			TimeUnit.MINUTES.sleep(1);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			System.exit(-1);
+//		}
 		
 		System.out.println("Main method exiting.... Bye Bye....");
 		System.exit(0);

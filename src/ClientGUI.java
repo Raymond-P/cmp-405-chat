@@ -16,6 +16,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -30,7 +34,6 @@ import javax.swing.text.DefaultCaret;
 
 public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 	
-	private boolean done = true;//until connected you are "done"
 	private String line = "";
 	
 	private JTextArea displayText = new JTextArea(16,50);
@@ -39,13 +42,13 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 	
 	
 	private JTextField input = new JTextField(1);
-	private JTextField targetUserID = new JTextField();
 	
-	private JButton btnConnect = new JButton("Connect");
+	// adding Date to the display text
+	private SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+	private Date now = new Date();
+	
 	private JButton btnSend = new JButton("Send");
 	private JButton btnQuit = new JButton("Disconnect");
-	private JButton btnPrivate = new JButton("Private");
-	private JCheckBox chkboxEncrypt = new JCheckBox("Encrypt Message", false);
 	
 	private JPanel mainJP = new JPanel();//everything goes in here
 	private JPanel displayJP = new JPanel();//textarea.. plus whatever 
@@ -77,25 +80,17 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 		
 		
 		
-		btnsJP.setLayout(new GridLayout(1,4));
-
-		btnPrivate.addActionListener(this);
-		this.targetUserID.addActionListener(this);
+		btnsJP.setLayout(new FlowLayout());
 		
-		btnConnect.addActionListener(this);
+		
 		btnSend.addActionListener(this);
 		btnQuit.addActionListener(this);
-		chkboxEncrypt.addActionListener(this);
 		
 
 		
 		Box box = Box.createHorizontalBox();
 		box.add(btnQuit);
-		box.add(btnConnect);
 		box.add(btnSend);
-		box.add(btnPrivate);
-		box.add(targetUserID);
-		box.add(chkboxEncrypt);
 		
 		btnsJP.add(box);
 		/*btnsJP.add(btnPrivate);
@@ -115,18 +110,15 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 		mainJP.add(west, BorderLayout.WEST);
 		mainJP.add(north, BorderLayout.NORTH);
 		
-		input.setEditable(false);
-		targetUserID.setEditable(false);
+//		input.setEditable(false);
+		
 		displayText.setEditable(false);
 		//input.setPreferredSize(new Dimension(500,500));
 		
 		add(mainJP);
-		btnQuit.setEnabled(false);
-		btnPrivate.setEnabled(false);
-		btnSend.setEnabled(false);
-		btnPrivate.setEnabled(false);
+//		btnQuit.setEnabled(false);
+//		btnSend.setEnabled(false);
 		
-		this.chkboxEncrypt.setEnabled(false);
 		
 		this.addKeyListener(this);
 		
@@ -139,13 +131,27 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 		
 		
 	}
+	private void setTitle(String InetAddress, String portNumber){
+		//TODO make this more efficient and relevant
+		this.setTitle(InetAddress+"@"+portNumber);
+	}
 	
 	private void displayMsg(String msg){
-		displayText.append(msg +"\n");
+		now = new Date();  // generates a new object when method is called, no bueno...
+		displayText.append(sdf.format(now)+" "+msg +"\n");
+	}
+	
+	private void disconnect(){
+		//TODO find a way to close the application
+		this.displayMsg("User has disconnected... Bye Bye");
 	}
 	
 	private void send(){
 		//TODO write text code
+		if (input.getText().split("").length > 0){  // if it's not an empty line or full of spaces...
+			this.displayMsg(input.getText());
+			this.input.setText("");
+		}
 	}
 
 	@Override
@@ -153,13 +159,13 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 		//do something when connect
 		//connect(serverName, serverPortNumber);
 //		if(e.getSource() == btnConnect)
-			
 		
 		//do something when send
-//		if(e.getSource()== btnSend)
-//		
-//		if(e.getSource() == btnQuit)
-//			
+		if(e.getSource()== btnSend)
+			this.send();
+		
+		if(e.getSource() == btnQuit)
+			disconnect();
 //		if(e.getSource() == btnPrivate)
 //			
 		
@@ -167,7 +173,7 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 		//do something when private
 		//send... private...
 		//do something when quit
-		//disconnect();
+		
 		
 	}
 	
@@ -180,7 +186,7 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 		 }
 		 else if (e.getKeyCode() == KeyEvent.VK_ENTER){
 //			 System.out.println("public text");
-//			 this.send();
+			 this.send();
 		 }
 		 else if(e.isControlDown()){
 //			 this.chkboxEncrypt.doClick();
