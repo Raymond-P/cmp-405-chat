@@ -143,21 +143,25 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 	private void displayMsg(String msg){
 		displayText.append(msg +"\n");
 	}
+	
+	private void send(){
+		//TODO write text code
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		//do something when connect
 		//connect(serverName, serverPortNumber);
-		if(e.getSource() == btnConnect)
+//		if(e.getSource() == btnConnect)
 			
 		
 		//do something when send
-		if(e.getSource()== btnSend)
-		
-		if(e.getSource() == btnQuit)
-			
-		if(e.getSource() == btnPrivate)
-			
+//		if(e.getSource()== btnSend)
+//		
+//		if(e.getSource() == btnQuit)
+//			
+//		if(e.getSource() == btnPrivate)
+//			
 		
 		//send()
 		//do something when private
