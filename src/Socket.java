@@ -2,8 +2,6 @@ import java.net.*;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.crypto.Data;
-
 public class Socket {
 	
 	public static InetAddress myAddress = null;
@@ -107,13 +105,13 @@ public class Socket {
 		
 		}
 		
-		try {
-			TimeUnit.MINUTES.sleep(1);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
-		
+//		try {
+//			TimeUnit.MINUTES.sleep(1);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//			System.exit(-1);
+//		}
+//		
 		System.out.println("Main Method exiting... Bye bye...");
 	}
 	

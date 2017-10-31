@@ -126,17 +126,4 @@ public class SendReceiveSocket {
 
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }

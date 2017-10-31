@@ -1,38 +1,27 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.HeadlessException;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.Socket;
-import java.net.UnknownHostException;
-
-import java.sql.Time;
+import java.net.DatagramPacket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
 import javax.swing.text.DefaultCaret;
 
 public class ClientGUI extends JFrame implements ActionListener, KeyListener {
+	
+	private Connections model;
 	
 	private String line = "";
 	
@@ -63,7 +52,8 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 	ImageIcon orangeIcon = new ImageIcon("src/icon-orange.png");
 	
 	
-	public ClientGUI(){
+	public ClientGUI(Connections brain){
+		this.model = brain;
 		
 		mainJP.setLayout(new BorderLayout());
 		
@@ -129,11 +119,20 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 		//Set the close on exit
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
+		//
+		this.pack();
+		this.setVisible(true);
+		
 		
 	}
 	private void setTitle(String InetAddress, String portNumber){
 		//TODO make this more efficient and relevant
 		this.setTitle(InetAddress+"@"+portNumber);
+	}
+	
+	public void recieveMsg(DatagramPacket inPacket) {
+		String message = new String(inPacket.getData());
+		this.displayMsg(message);
 	}
 	
 	private void displayMsg(String msg){
@@ -185,30 +184,30 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 //		    	this.privatemsg();
 		 }
 		 else if (e.getKeyCode() == KeyEvent.VK_ENTER){
-//			 System.out.println("public text");
 			 this.send();
 		 }
-		 else if(e.isControlDown()){
-//			 this.chkboxEncrypt.doClick();
-		 }
+//		 else if(e.isControlDown()){
+////			 this.chkboxEncrypt.doClick();
+//		 }
 	 
 	}
 	
 	public static void main(String[] args) {
-		javax.swing.SwingUtilities.invokeLater( new Runnable(){
-			public void run() {
-				ClientGUI chatclient = new ClientGUI();
-				chatclient.pack();
-				chatclient.setVisible(true);
-				//chatclient.setSize(500,500);
-				chatclient.setTitle("Orange Chat");
-				
-			}
-			
-			
-		}
-				
-				);
+//		javax.swing.SwingUtilities.invokeLater( new Runnable(){
+//			public void run() {
+//				ClientGUI chatclient = new ClientGUI();
+//				chatclient.pack();
+//				chatclient.setVisible(true);
+//				//chatclient.setSize(500,500);
+//				chatclient.setTitle("Orange Chat");
+//				
+//			}
+//			
+//			
+//		}
+//				
+//				);
+//		ClientGUI chatclient = new ClientGUI();
 	}
 
 	@Override

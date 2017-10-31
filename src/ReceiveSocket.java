@@ -42,6 +42,7 @@ public class ReceiveSocket {
 			}
 			
 			String message = new String(inPacket.getData())+" from: "+inPacket.getAddress().toString()+" @ "+inPacket.getSocketAddress().toString();
+			System.out.println(inPacket.getSocketAddress());
 			System.out.println("Received message = " + message);
 			
 		} while(true);
