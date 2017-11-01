@@ -72,7 +72,7 @@ public class SendReceiveSocket {
 		DatagramSocket outSocket = null;
 		
 		try {
-			outSocket = new DatagramSocket(63000, myAddress);
+			outSocket = new DatagramSocket(63123, myAddress);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(-1);

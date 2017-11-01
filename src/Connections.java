@@ -8,7 +8,7 @@ import java.util.Hashtable;
 
 
 public class Connections {
-	private Hashtable<SocketAddress, ClientGUI> list_of_messengers = new Hashtable();
+	private Hashtable<String, ClientGUI> list_of_messengers = new Hashtable();
 	
 	private DatagramSocket socket;
 	private int socketNumber = 64000;
@@ -25,7 +25,9 @@ public class Connections {
 		}
 	}
 	
-	
+	public String getAddressString(){
+		return (myAddress.toString()+":"+socketNumber);
+	}
 	
 	private void recieve() {
 		
@@ -50,7 +52,8 @@ public class Connections {
 			
 			if (!this.list_of_messengers.containsKey(inPacket.getSocketAddress())){
 				//TODO: create gui instance and push it into the table
-				list_of_messengers.put( inPacket.getSocketAddress() , new ClientGUI(this));
+//				TODO: update parameters of list.put(<String>,<GUI>)
+//				list_of_messengers.put( inPacket.getSocketAddress() , new ClientGUI(this));
 			}
 			this.list_of_messengers.get(inPacket.getSocketAddress()).recieveMsg(inPacket);
 			String message = new String(inPacket.getData());
@@ -74,8 +77,18 @@ public class Connections {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	protected void connect(String ip, String port){
+		System.out.println("Model connect was called... with ip: "+ip+" and port: "+port);
+		if (!list_of_messengers.containsKey(ip+":"+port)){
+			list_of_messengers.put(ip+":"+port, new ClientGUI(this));
+//			list_of_messengers.remove(arg0)
+		}
 		
-		
-
+	}
+	protected void close(){
+		this.socket.disconnect();
+		this.socket.close();
 	}
 }
