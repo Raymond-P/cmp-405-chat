@@ -50,15 +50,15 @@ public class Connections {
 				System.exit(-1);
 			}
 			// TODO: find the corresponding gui and send the message to it
-			
+			String hostAddress = inPacket.getAddress().getHostAddress();
+			String port = ""+inPacket.getPort();
+			String key = hostAddress+":"+port;
 			if (!this.list_of_messengers.containsKey(inPacket.getSocketAddress())){
 				//create GUI instance and push it into the table
-				String hostAddress = inPacket.getAddress().getHostAddress();
-				String port = ""+inPacket.getPort();
-				String key = hostAddress+":"+port;
+				
 				list_of_messengers.put( key , new ClientGUI(this,hostAddress,port));
 			}
-			this.list_of_messengers.get(inPacket.getSocketAddress()).recieveMsg(inPacket);
+			this.list_of_messengers.get(key).recieveMsg(inPacket);
 			String message = new String(inPacket.getData());
 			System.out.println("Received message = " + message);
 			
