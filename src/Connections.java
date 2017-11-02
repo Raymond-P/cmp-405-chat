@@ -1,8 +1,9 @@
 
+import java.awt.EventQueue;
+import java.awt.event.WindowEvent;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketAddress;
 import java.util.Hashtable;
 
 
@@ -51,9 +52,11 @@ public class Connections {
 			// TODO: find the corresponding gui and send the message to it
 			
 			if (!this.list_of_messengers.containsKey(inPacket.getSocketAddress())){
-				//TODO: create gui instance and push it into the table
-//				TODO: update parameters of list.put(<String>,<GUI>)
-//				list_of_messengers.put( inPacket.getSocketAddress() , new ClientGUI(this));
+				//create GUI instance and push it into the table
+				String hostAddress = inPacket.getAddress().getHostAddress();
+				String port = ""+inPacket.getPort();
+				String key = hostAddress+":"+port;
+				list_of_messengers.put( key , new ClientGUI(this,hostAddress,port));
 			}
 			this.list_of_messengers.get(inPacket.getSocketAddress()).recieveMsg(inPacket);
 			String message = new String(inPacket.getData());
@@ -64,7 +67,7 @@ public class Connections {
 
 	}
 	
-	private void send(String message, byte[] address, int port ) {
+	public void send(String message, byte[] address, int port ) {
 		// TODO Auto-generated method stub
 		byte[] buffer = message.getBytes();
 		InetAddress destination_address;
@@ -82,13 +85,38 @@ public class Connections {
 	protected void connect(String ip, String port){
 		System.out.println("Model connect was called... with ip: "+ip+" and port: "+port);
 		if (!list_of_messengers.containsKey(ip+":"+port)){
-			list_of_messengers.put(ip+":"+port, new ClientGUI(this));
-//			list_of_messengers.remove(arg0)
+			list_of_messengers.put(ip+":"+port, new ClientGUI(this,ip,port));
+			list_of_messengers.get(ip+":"+port).requestFocus();
 		}
 		
 	}
+	
+	protected void disconectChat(String address, String port) {
+		String key = address+":"+port;
+		ClientGUI chat = list_of_messengers.remove(key);
+		chat.dispatchEvent(new WindowEvent(chat, WindowEvent.WINDOW_CLOSING));
+	}
+	
 	protected void close(){
 		this.socket.disconnect();
 		this.socket.close();
+	}
+	
+	
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		Connections model = new Connections();
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					protoGUI window = new protoGUI(model);
+					window.getFrame().setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }

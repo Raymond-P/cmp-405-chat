@@ -31,31 +31,21 @@ public class protoGUI implements ActionListener{
 	private JTextField ip_textField;
 	private JTextField port_textField;
 	
-	private Connections model  =  new Connections();
+	private Connections model;
 	private JButton btnConnect;
 	private JButton btnDisconnect;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					protoGUI window = new protoGUI();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+	public JFrame getFrame() {
+		return this.frame;
 	}
 
 	/**
 	 * Create the application.
 	 */
-	public protoGUI() {
+	public protoGUI(Connections model) {
 		initialize();
+		
+		this.model = model;
 		this.btnConnect.addActionListener(this);
 		this.frame.setTitle(this.model.getAddressString());
 	}
@@ -81,6 +71,7 @@ public class protoGUI implements ActionListener{
 		connect_panel.add(ip_label);
 		
 		ip_textField = new JTextField();
+		ip_textField.setText("192.168.1.102");
 		ip_textField.setBounds(110, 39, 174, 20);
 		connect_panel.add(ip_textField);
 		ip_textField.setColumns(10);
@@ -90,6 +81,7 @@ public class protoGUI implements ActionListener{
 		connect_panel.add(port_label);
 		
 		port_textField = new JTextField();
+		port_textField.setText("64000");
 		port_textField.setBounds(110, 77, 174, 20);
 		connect_panel.add(port_textField);
 		port_textField.setColumns(10);

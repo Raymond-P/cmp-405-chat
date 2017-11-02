@@ -20,7 +20,7 @@ public class ReceiveSocket {
 		DatagramPacket inPacket = new DatagramPacket(inBuffer, inBuffer.length);
 		
 		try {
-			inSocket = new DatagramSocket(64000, myAddress);
+			inSocket = new DatagramSocket(59000, myAddress);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(-1);

@@ -89,7 +89,7 @@ public class Socket {
 				otherHost[0] = (byte)192;
 				otherHost[1] = (byte)168;
 				otherHost[2] = (byte)1;
-				otherHost[3] = (byte)118;
+				otherHost[3] = (byte)5;
 				
 				InetAddress otherAddress = InetAddress.getByAddress(otherHost);
 				

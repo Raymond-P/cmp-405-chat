@@ -22,6 +22,8 @@ import javax.swing.text.DefaultCaret;
 public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 	
 	private Connections model;
+	private String ip;
+	private String port;
 	
 	private String line = "";
 	
@@ -48,12 +50,11 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 	private JPanel north = new JPanel();
 	private JPanel east = new JPanel();
 	
-	//nice looking ;P//
-	ImageIcon orangeIcon = new ImageIcon("src/icon-orange.png");
 	
-	
-	public ClientGUI(Connections brain){
+	public ClientGUI(Connections brain, String ip, String port){
 		this.model = brain;
+		this.ip = ip;
+		this.port = port;
 		
 		mainJP.setLayout(new BorderLayout());
 		
@@ -83,10 +84,6 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 		box.add(btnSend);
 		
 		btnsJP.add(box);
-		/*btnsJP.add(btnPrivate);
-		btnsJP.add(btnConnect);
-		btnsJP.add(btnSend);
-		btnsJP.add(btnQuit); */
 		east.setBackground(Color.ORANGE);
 		west.setBackground(Color.ORANGE);
 		north.setBackground(Color.ORANGE);
@@ -100,20 +97,12 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 		mainJP.add(west, BorderLayout.WEST);
 		mainJP.add(north, BorderLayout.NORTH);
 		
-//		input.setEditable(false);
 		
 		displayText.setEditable(false);
-		//input.setPreferredSize(new Dimension(500,500));
 		
 		add(mainJP);
-//		btnQuit.setEnabled(false);
-//		btnSend.setEnabled(false);
-		
 		
 		this.addKeyListener(this);
-		
-		//fancy icon//
-		this.setIconImage(this.orangeIcon.getImage());
 		
 		
 		//Set the close on exit
@@ -122,6 +111,7 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 		//
 		this.pack();
 		this.setVisible(true);
+		this.setTitle(ip+":"+port);
 		
 		
 	}
@@ -143,72 +133,48 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 	private void disconnect(){
 		//TODO find a way to close the application
 		this.displayMsg("User has disconnected... Bye Bye");
+		this.model.disconectChat(ip, port);
 	}
 	
 	private void send(){
 		//TODO write text code
-		if (input.getText().split("").length > 0){  // if it's not an empty line or full of spaces...
-			this.displayMsg(input.getText());
+		String message = input.getText();
+		if (message.split(" ").length > 0 || message.length() > 0){  // if it's not an empty line or full of spaces...
+			this.displayMsg(message);
+			// make the ip address into a byte array
+			byte[] address = new byte[4];
+			String[] ipArray = ip.split("\\.");
+			System.out.println("address bytes: "+address);
+			System.out.println(ip);
+			System.out.println(ipArray);
+			for( int i = 0; i < 4; i++){
+				address[i] = (byte) Integer.parseInt(ipArray[i]); 
+			}
 			this.input.setText("");
+			this.model.send(message, address, Integer.parseInt(port));
 		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		//do something when connect
-		//connect(serverName, serverPortNumber);
-//		if(e.getSource() == btnConnect)
-		
-		//do something when send
 		if(e.getSource()== btnSend)
 			this.send();
 		
 		if(e.getSource() == btnQuit)
 			disconnect();
-//		if(e.getSource() == btnPrivate)
-//			
-		
-		//send()
-		//do something when private
-		//send... private...
-		//do something when quit
-		
-		
+	
 	}
 	
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
-		 if (e.getKeyCode() == KeyEvent.VK_ENTER && e.isShiftDown()){ 
-//		    	System.out.println("private text");
-//		    	this.privatemsg();
-		 }
-		 else if (e.getKeyCode() == KeyEvent.VK_ENTER){
+		if (e.getKeyCode() == KeyEvent.VK_ENTER){
 			 this.send();
 		 }
-//		 else if(e.isControlDown()){
-////			 this.chkboxEncrypt.doClick();
-//		 }
+
 	 
 	}
 	
-	public static void main(String[] args) {
-//		javax.swing.SwingUtilities.invokeLater( new Runnable(){
-//			public void run() {
-//				ClientGUI chatclient = new ClientGUI();
-//				chatclient.pack();
-//				chatclient.setVisible(true);
-//				//chatclient.setSize(500,500);
-//				chatclient.setTitle("Orange Chat");
-//				
-//			}
-//			
-//			
-//		}
-//				
-//				);
-//		ClientGUI chatclient = new ClientGUI();
-	}
 
 	@Override
 	public void keyReleased(KeyEvent arg0) {
