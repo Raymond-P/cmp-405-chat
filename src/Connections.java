@@ -24,6 +24,15 @@ public class Connections {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		Thread recieveThread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				recieve();
+			}
+		});
+		recieveThread.start();
 	}
 	
 	public String getAddressString(){
@@ -53,7 +62,7 @@ public class Connections {
 			String hostAddress = inPacket.getAddress().getHostAddress();
 			String port = ""+inPacket.getPort();
 			String key = hostAddress+":"+port;
-			if (!this.list_of_messengers.containsKey(inPacket.getSocketAddress())){
+			if (!this.list_of_messengers.containsKey(key)){
 				//create GUI instance and push it into the table
 				
 				list_of_messengers.put( key , new ClientGUI(this,hostAddress,port));

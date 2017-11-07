@@ -122,7 +122,7 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 	
 	public void recieveMsg(DatagramPacket inPacket) {
 		String message = new String(inPacket.getData());
-		this.displayMsg(message);
+		this.displayMsg("Sender: "+message);
 	}
 	
 	private void displayMsg(String msg){
