@@ -27,9 +27,9 @@ import java.awt.event.KeyEvent;
 
 public class protoGUI implements ActionListener{
 
+	private static String port = "64000";
 	private JFrame frame;
-	private JTextField ip_textField;
-	private JTextField port_textField;
+	private JTextField username_textField;
 	
 	private Connections model;
 	private JButton btnConnect;
@@ -66,25 +66,15 @@ public class protoGUI implements ActionListener{
 		connect_panel.setBorder(new LineBorder(new Color(0, 0, 0), 3, true));
 		connect_panel.setLayout(null);
 		
-		JLabel ip_label = new JLabel("IP Address:");
-		ip_label.setBounds(10, 42, 73, 14);
-		connect_panel.add(ip_label);
+		JLabel username_label = new JLabel("Username:");
+		username_label.setBounds(10, 42, 73, 14);
+		connect_panel.add(username_label);
 		
-		ip_textField = new JTextField();
-		ip_textField.setText("192.168.1.102");
-		ip_textField.setBounds(110, 39, 174, 20);
-		connect_panel.add(ip_textField);
-		ip_textField.setColumns(10);
-		
-		JLabel port_label = new JLabel("Port:");
-		port_label.setBounds(10, 82, 73, 14);
-		connect_panel.add(port_label);
-		
-		port_textField = new JTextField();
-		port_textField.setText("64000");
-		port_textField.setBounds(110, 77, 174, 20);
-		connect_panel.add(port_textField);
-		port_textField.setColumns(10);
+		username_textField = new JTextField();
+		username_textField.setText("name-of-person");
+		username_textField.setBounds(110, 39, 174, 20);
+		connect_panel.add(username_textField);
+		username_textField.setColumns(10);
 		
 		btnConnect = new JButton("Connect");
 		btnConnect.setBounds(10, 116, 90, 23);
@@ -103,9 +93,8 @@ public class protoGUI implements ActionListener{
 	
 	private void connect(){
 		System.out.println("connect() was called...");
-		String address = this.ip_textField.getText();
-		String port = this.port_textField.getText();
-		this.model.connect(address, port);
+		String username = this.username_textField.getText();
+		this.model.connect(username);
 		
 	}
 
