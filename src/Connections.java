@@ -24,7 +24,8 @@ import java.util.Hashtable;
  * simply assume that every username has a unique name.
  */
 public class Connections {
-	private Hashtable<String, ClientGUI> list_of_messengers = new Hashtable();
+	private Hashtable<String, ClientGUI> list_of_messengers = new Hashtable<String, ClientGUI>();
+	private Hashtable<String, String> connected_users = new Hashtable<String, String>();
 	
 	private DatagramSocket socket;
 	private int socketNumber = 64000;
