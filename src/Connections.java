@@ -56,6 +56,9 @@ public class Connections {
 		return (myAddress.toString()+":"+socketNumber);
 	}
 	
+	/**
+	 * The receive method that listens in to incoming messages 
+	 */
 	private void recieve() {
 		
 		byte[] inBuffer = new byte[100];
