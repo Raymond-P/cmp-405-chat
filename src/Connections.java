@@ -5,10 +5,11 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.Hashtable;
+import java.util.concurrent.TimeUnit;
 
 /**
  * TODO: find a way to broadcast in connect
- * TODO: store usernames as keys in list_of_messengers, we'll deal with repeated usernames later 
+ * TODO: store usernames as keys in connected_users, we'll deal with repeated usernames later 
  * TODO: modify recieve thread to add an user when we recive their "ARP" reply
  * "##### name-of-user #### AA.BB.CC.DD"
  * 
@@ -24,19 +25,22 @@ import java.util.Hashtable;
  * simply assume that every username has a unique name.
  */
 public class Connections {
-	private Hashtable<String, ClientGUI> list_of_messengers = new Hashtable<String, ClientGUI>();
-	private Hashtable<String, String> connected_users = new Hashtable<String, String>();
+	private Hashtable<String, ClientGUI> connected_users = new Hashtable<String, ClientGUI>();
+	private Hashtable<String, String> users_list = new Hashtable<String, String>();
 	
 	private DatagramSocket socket;
 	private int socketNumber = 64000;
 	private InetAddress myAddress;
+	private String myUserName;
+	private String arpReply;
 	
 	public Connections() {
 
 		try { 
 			myAddress = InetAddress.getLocalHost();
 			socket = new DatagramSocket(socketNumber, myAddress);	
-			
+			myUserName = "Raymond";
+			arpReply = "##### "+myUserName+" ##### "+myAddress.getHostAddress();
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -78,17 +82,34 @@ public class Connections {
 				e.printStackTrace();
 				System.exit(-1);
 			}
+
 			// TODO: find the corresponding gui and send the message to it
 			String hostAddress = inPacket.getAddress().getHostAddress();
 			String port = ""+inPacket.getPort();
 			String key = hostAddress+":"+port;
-			if (!this.list_of_messengers.containsKey(key)){
-				//create GUI instance and push it into the table
-				
-				list_of_messengers.put( key , new ClientGUI(this,hostAddress,port));
-			}
-			this.list_of_messengers.get(key).recieveMsg(inPacket);
 			String message = new String(inPacket.getData());
+
+			
+			// address request
+			if (message.startsWith("????? ")) {  // "yo, where you at?"
+				if(message.split(" ")[1].equals(myUserName)) {  // who? me?
+					this.send(this.arpReply, hostAddress);
+				}
+			}
+			else if (message.startsWith("##### ")) {  // I am 
+				String[] info = message.split(" ");
+				String theirName = info[1];
+				String theirAddress = info[3];
+				
+				this.users_list.put(theirName, theirAddress);
+			}
+			
+			
+			if (!this.connected_users.containsKey(key)){
+				//create GUI instance and push it into the table
+				connected_users.put( key , new ClientGUI(this,hostAddress,port));
+			}
+			this.connected_users.get(key).recieveMsg(inPacket);
 			System.out.println("Received message = " + message);
 			
 		} while(true);
@@ -179,43 +200,52 @@ public class Connections {
 	 * broadcasts the connect to username and it gets a response from that user.
 	 * the second part of this process, the message received, is handled in the 
 	 * receive method
-	 * @param username The name of the user that you are requesting to connect to
+	 * @param ipAddress The IP address of the user that you are requesting to connect to
 	 * @param port the specified port that the host will recieve the message in.
 	 */
-	protected void connect(String username, String port){
-		System.out.println("Model connect was called... with username: "+username);
-		if (!list_of_messengers.containsKey(username)){
-			list_of_messengers.put(username+":"+port, new ClientGUI(this,username,port));
-			list_of_messengers.get(username+":"+port).requestFocus();
+	protected void connect(String ipAddress, String port){
+		System.out.println("Model connect was called... with username: "+ipAddress);
+		if (!connected_users.containsKey(ipAddress)){
+			connected_users.put(ipAddress+":"+port, new ClientGUI(this,ipAddress,port));
+			connected_users.get(ipAddress+":"+port).requestFocus();
 		}
-//		String message = "????? "+username;
-//		byte[] buffer = message.getBytes();
-//		InetAddress destination_address;
-//		try {
-//			destination_address = InetAddress.getByAddress();
-//			DatagramPacket packet = new DatagramPacket(buffer, buffer.length, destination_address, port);
-//			socket.send(packet);
-//			
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 		
 	}
 	
 	/**
+	 * TODO: prompt ERROR: Could not connect to user
+	 * 
 	 * Connects to another client by specifying the client's username.
 	 * It does this by making an ARP-like request where it 
-	 * broadcasts the connect to username and it gets a response from that user.
+	 * broadcasts an ARP like request asking the username to respond with it's address.
 	 * the second part of this process, the message received, is handled in the 
 	 * receive method
 	 * @param username The name of the user that you are requesting to connect to.
 	 */
-	protected void connect(String username) {
-		this.connect(username, ""+socketNumber);
+	protected void connectTo(String username) {
+
+		if(!users_list.containsKey(username)) {
+			String arpRequest = "????? "+username+" ##### "+this.myUserName; // where is username this is me
+			String broadcastAddress = "255.255.255.255";
+			for (int TTL = 20;!users_list.containsKey(username) && TTL > 1 ;TTL-- ) {
+				
+				this.send(arpRequest, broadcastAddress );
+
+				try {
+					TimeUnit.MILLISECONDS.sleep(10); 
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		if (users_list.containsKey(username)) {
+			//TODO: get the user address from the dictionary
+			this.connect(users_list.get(username), ""+socketNumber);
+		}
 	}
-	
-	
+
+
 	/**
 	 * Checks if we are already connected to someone with the specified
 	 * username
@@ -223,13 +253,13 @@ public class Connections {
 	 * @return True if its connected False if it is not
 	 */
 	protected boolean isConectedTo(String username) {
-		return list_of_messengers.containsKey(username);
+		return connected_users.containsKey(username);
 	}
 	
 	protected void disconectChat(String address, String port) {
 		String key = address+":"+port;
-		ClientGUI chat = list_of_messengers.remove(key);
-		chat.dispatchEvent(new WindowEvent(chat, WindowEvent.WINDOW_CLOSING));
+		ClientGUI chat = connected_users.remove(key);
+//		chat.dispatchEvent(new WindowEvent(chat, WindowEvent.WINDOW_CLOSING));
 	}
 	
 	protected void close(){

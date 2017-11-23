@@ -94,7 +94,7 @@ public class protoGUI implements ActionListener{
 	private void connect(){
 		System.out.println("connect() was called...");
 		String username = this.username_textField.getText();
-		this.model.connect(username);
+		this.model.connectTo(username);
 		
 	}
 
