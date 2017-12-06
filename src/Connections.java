@@ -38,7 +38,7 @@ public class Connections {
 
 		try { 
 			myAddress = InetAddress.getLocalHost();
-			socket = new DatagramSocket(socketNumber, myAddress);	
+			socket = new DatagramSocket(socketNumber);	
 			myUserName = "Raymond";
 			arpReply = "##### "+myUserName+" ##### "+myAddress.getHostAddress();
 			
@@ -92,8 +92,12 @@ public class Connections {
 			
 			// address request
 			if (message.startsWith("????? ")) {  // "yo, where you at?"
+				// DEBUG // listening to requests in the network
+				System.out.println("user: "+message.split(" ")[3]+" @"+hostAddress+" is looking for "+message.split(" ")[1]);
 				if(message.split(" ")[1].equals(myUserName)) {  // who? me?
 					this.send(this.arpReply, hostAddress);
+					// DEBUG // logging information replies
+					System.out.println("user: "+message.split(" ")[3]+" @"+hostAddress+" requested your info and it was sent.");
 				}
 			}
 			else if (message.startsWith("##### ")) {  // I am 
@@ -102,15 +106,17 @@ public class Connections {
 				String theirAddress = info[3];
 				
 				this.users_list.put(theirName, theirAddress);
+				// DEBUG //
+				System.out.println("added user: "+theirName+" @"+theirAddress);
 			}
 			
-			
-			if (!this.connected_users.containsKey(key)){
-				//create GUI instance and push it into the table
-				connected_users.put( key , new ClientGUI(this,hostAddress,port));
-			}
-			this.connected_users.get(key).recieveMsg(inPacket);
-			System.out.println("Received message = " + message);
+
+				if (!this.connected_users.containsKey(key)){
+					//create GUI instance and push it into the table
+					connected_users.put( key , new ClientGUI(this,hostAddress,port));
+				}
+				this.connected_users.get(key).recieveMsg(inPacket);
+				System.out.println("Received message = " + message);
 			
 		} while(true);
 

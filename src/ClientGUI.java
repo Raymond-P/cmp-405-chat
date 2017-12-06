@@ -30,6 +30,7 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 	private String port;
 	
 	private String line = "";
+	private String user = "";
 	
 	private JTextArea displayText = new JTextArea(16,50);
 	private JScrollPane scroll = new JScrollPane(displayText);
@@ -122,6 +123,10 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 	private void setTitle(String InetAddress, String portNumber){
 		//TODO make this more efficient and relevant
 		this.setTitle(InetAddress+"@"+portNumber);
+	}
+	public void setName(String userName) {
+		this.user = userName;
+		this.setTitle(userName+" "+this.getTitle());
 	}
 	
 	public void recieveMsg(DatagramPacket inPacket) {
