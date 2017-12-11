@@ -40,7 +40,7 @@ public class Connections {
 		try { 
 			myAddress = InetAddress.getLocalHost();
 			socket = new DatagramSocket(socketNumber);	
-			myUserName = "Raymond";
+			myUserName = "ubuntu";
 			arpReply = "##### "+myUserName+" ##### "+myAddress.getHostAddress();
 			
 		}catch(Exception e){
@@ -120,7 +120,7 @@ public class Connections {
 					System.out.println("adding key and new client GUI to connected users.");
 					String name ="";
 					for (String curKey : users_list.keySet()) {
-						if (users_list.get(curKey) == key) {
+						if (users_list.get(curKey).equals(key)) {
 							name = curKey;
 						}
 					}
