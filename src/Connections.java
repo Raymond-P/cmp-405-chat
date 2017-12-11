@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -86,7 +87,7 @@ public class Connections {
 			// TODO: find the corresponding gui and send the message to it
 			String hostAddress = inPacket.getAddress().getHostAddress();
 			String port = ""+inPacket.getPort();
-			String key = hostAddress+":"+port;
+			String key = hostAddress;
 			String message = new String(inPacket.getData());
 
 			
@@ -109,15 +110,27 @@ public class Connections {
 				// DEBUG //
 				System.out.println("added user: "+theirName+" @"+theirAddress);
 			}
-			
 
+			if(users_list.containsValue(hostAddress)) {
+				System.out.println("host address: "+hostAddress+"found in users_llist");
 				if (!this.connected_users.containsKey(key)){
+					System.out.println("key: "+key+" not found in connected_users...");
 					//create GUI instance and push it into the table
 					connected_users.put( key , new ClientGUI(this,hostAddress,port));
+					System.out.println("adding key and new client GUI to connected users.");
+					String name ="";
+					for (String curKey : users_list.keySet()) {
+						if (users_list.get(curKey) == key) {
+							name = curKey;
+						}
+					}
+					connected_users.get(key).setName(name);
 				}
+				//if ((!message.startsWith("????? ") || !message.startsWith("##### "))) {
 				this.connected_users.get(key).recieveMsg(inPacket);
 				System.out.println("Received message = " + message);
-			
+				//}
+			}
 		} while(true);
 
 
@@ -212,8 +225,8 @@ public class Connections {
 	protected void connect(String ipAddress, String port){
 		System.out.println("Model connect was called... with username: "+ipAddress);
 		if (!connected_users.containsKey(ipAddress)){
-			connected_users.put(ipAddress+":"+port, new ClientGUI(this,ipAddress,port));
-			connected_users.get(ipAddress+":"+port).requestFocus();
+			connected_users.put(ipAddress, new ClientGUI(this,ipAddress,port));
+			connected_users.get(ipAddress).requestFocus();
 		}
 		
 	}
@@ -233,7 +246,7 @@ public class Connections {
 		if(!users_list.containsKey(username)) {
 			String arpRequest = "????? "+username+" ##### "+this.myUserName; // where is username this is me
 			String broadcastAddress = "255.255.255.255";
-			for (int TTL = 20;!users_list.containsKey(username) && TTL > 1 ;TTL-- ) {
+			for (int TTL = 2;!users_list.containsKey(username) && TTL > 1 ;TTL-- ) {
 				
 				this.send(arpRequest, broadcastAddress );
 
