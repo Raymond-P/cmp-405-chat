@@ -99,6 +99,12 @@ public class Connections {
 					this.send(this.arpReply, hostAddress);
 					// DEBUG // logging information replies
 					System.out.println("user: "+message.split(" ")[3]+" @"+hostAddress+" requested your info and it was sent.");
+					String[] info = message.split(" ");
+					String theirName = info[3];
+					String theirAddress = hostAddress;
+					
+					this.users_list.put(theirName, theirAddress);
+					System.out.println("By request. added user: "+theirName+" @"+theirAddress);
 				}
 			}
 			else if (message.startsWith("##### ")) {  // I am 
